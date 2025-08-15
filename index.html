@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Business Law Final Exam — Timed (80 Questions)</title>
+  <style>
+    :root{
+      --bg:#0b0f14; --panel:#111822; --muted:#a6b5c7; --ink:#e7eef7; --accent:#4da3ff;
+      --ok:#1db954; --bad:#ff4d4f; --warn:#ffd166;
+    }
+    html,body{height:100%;margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink)}
+    .container{max-width:1100px;margin:0 auto;padding:24px}
+    header{position:sticky;top:0;background:linear-gradient(180deg,rgba(11,15,20,.95),rgba(11,15,20,.65));backdrop-filter:blur(6px);border-bottom:1px solid #1b2533;z-index:20}
+    header .bar{display:flex;gap:16px;align-items:center;justify-content:space-between;padding:12px 24px}
+    .pill{display:inline-block;padding:.25rem .6rem;border:1px solid #2a3a52;border-radius:999px;color:var(--muted);font-size:.9rem}
+    h1{font-size:1.6rem;margin:18px 0 0}
+    h2{font-size:1.25rem;margin:18px 0 8px}
+    .section{background:var(--panel);border:1px solid #223246;border-radius:16px;padding:16px 18px;margin:20px 0}
+    .q{padding:12px 12px;border-bottom:1px dashed #25344a}
+    .q:last-child{border-bottom:none}
+    .q h4{margin:0 0 8px;font-size:1rem;color:#cde0f7}
+    .answers{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+    .answers label{display:flex;gap:8px;align-items:center;background:#0f151f;border:1px solid #213149;padding:8px 10px;border-radius:10px;cursor:pointer}
+    .answers input[type="radio"]{accent-color:var(--accent)}
+    .short{display:flex;gap:10px;align-items:flex-start}
+    .short textarea{flex:1;min-height:110px;background:#0f151f;border:1px solid #213149;color:var(--ink);border-radius:10px;padding:10px}
+    .short .points{width:120px;display:flex;flex-direction:column;gap:6px}
+    input[type="number"]{background:#0f151f;border:1px solid #213149;color:var(--ink);border-radius:10px;padding:8px}
+    .meta{display:flex;flex-wrap:wrap;gap:8px;color:var(--muted)}
+    .btn{background:var(--accent);color:#061626;border:none;font-weight:700;padding:12px 16px;border-radius:12px;cursor:pointer}
+    .btn.secondary{background:#203147;color:#cde0f7;border:1px solid #2a4060}
+    .btn.ghost{background:transparent;border:1px solid #2a4060;color:#9cb9df}
+    .badge{padding:.2rem .5rem;border-radius:8px;background:#102033;border:1px solid #1f3150;color:#b9cbe4}
+    .wrong{outline:2px solid var(--bad);background:#2a1010}
+    .right{outline:2px solid var(--ok);background:#0f2416}
+    .second-chance{margin-top:8px;padding:10px;border-radius:10px;background:#141c28;border:1px dashed #2b3d59}
+    .hint{margin-top:8px;font-size:.95rem;color:#cfdcf1}
+    .sticky-bottom{position:sticky;bottom:0;display:flex;gap:10px;justify-content:flex-end;background:linear-gradient(180deg,rgba(11,15,20,0),rgba(11,15,20,1));padding:16px;border-top:1px solid #1b2533}
+    .score-card{background:#09121d;border:1px solid #223246;border-radius:14px;padding:12px 14px}
+    .overlay{position:fixed;inset:0;background:radial-gradient(1000px 600px at 70% -10%,#1a2a44,#0b0f14 60%);display:flex;align-items:center;justify-content:center;z-index:50}
+    .gate{max-width:820px;background:var(--panel);border:1px solid #223246;padding:24px;border-radius:18px;box-shadow:0 20px 60px rgba(0,0,0,.45)}
+    .story{white-space:pre-wrap;background:#0e151f;border:1px solid #1e2c43;padding:12px;border-radius:12px}
+    .hidden{display:none!important}
+    /* Floating timer */
+    .timer{position:fixed;right:16px;top:16px;background:var(--panel);border:1px solid #223246;padding:10px 14px;border-radius:12px;box-shadow:0 6px 20px rgba(0,0,0,.35);font-weight:700;z-index:60}
+    .timer.soon{background:#2a1b00;border-color:#5f3a00;color:#ffd166}
+    .timer.over{background:#2a0000;border-color:#5f0000;color:#ffaaaa}
+    /* Fireworks (simple confetti) */
+    #confetti{pointer-events:none;position:fixed;inset:0;z-index:70}
+    /* Whammy character */
+    #whammy{position:fixed;left:-200px;bottom:10px;z-index:70;font-size:48px;transition:transform .9s ease;filter:drop-shadow(0 6px 10px rgba(0,0,0,.6))}
+    #whammy.show{transform:translateX(calc(100vw + 220px))}
+    #whammy .label{font-size:14px;display:block;text-align:center;color:#ffb3b3}
+  </style>
+</head>
+<body>
+  <canvas id="confetti" width="0" height="0"></canvas>
+  <div id="whammy" aria-hidden="true">🤯<span class="label">Whammy!</span></div>
+
+  <div id="timer" class="timer" aria-live="polite">50:00</div>
+
+  <div id="gate" class="overlay" role="dialog" aria-modal="true">
+    <div class="gate">
+      <h1>Final Exam — Business Law (Modules 1–7)</h1>
+      <p class="meta">80 questions • 50 minutes • One second‑chance per missed auto‑graded item (worth half credit).</p>
+      <ul class="meta">
+        <li><span class="badge">20% True/False (16)</span></li>
+        <li><span class="badge">70% Multiple Choice (62)</span></li>
+        <li><span class="badge">Short Answer (2) linked to the case</span></li>
+      </ul>
+      <details>
+        <summary>Instructions</summary>
+        <ul>
+          <li>Click <b>I am ready</b> to reveal the exam and start the 50‑minute timer.</li>
+          <li>Click <b>Grade</b> to score auto‑graded sections. Missed items unlock a one‑time <b>Second Chance</b> worth half credit; use the <b>Hint</b> button if needed.</li>
+          <li>Enter points (0–10) for each Short Answer; these count toward the overall grade.</li>
+          <li>Click <b>Rescore</b> after second‑chance attempts and short‑answer scoring.</li>
+        </ul>
+      </details>
+      <button id="startBtn" class="btn" aria-describedby="timer">I am ready</button>
+    </div>
+  </div>
+<!-- START BUTTON: safe early binder -->
+<script>
+(function () {
+  const gate  = document.getElementById('gate');
+  const btn   = document.getElementById('startBtn');
+  const timer = document.getElementById('timer');
+
+  // Lock page scroll until user starts
+  document.body.style.overflow = 'hidden';
+
+  function fmt(s){ const m=Math.floor(s/60), ss=s%60; return `${String(m).padStart(2,'0')}:${String(ss).padStart(2,'0')}`; }
+
+  btn?.addEventListener('click', () => {
+    // Hide the intro overlay and allow scrolling
+    gate?.classList.add('hidden');
+    document.body.style.overflow = 'auto';
+
+    // Prefer the main timer if it's present (tick/tHandle defined later in page)
+    if (typeof tick === 'function') {
+      if (typeof tHandle === 'undefined' || !tHandle) {
+        tHandle = setInterval(tick, 1000);
+      }
+      return;
+    }
+
+    // Fallback: simple standalone countdown that only updates the timer bubble
+    let remaining = 50 * 60;
+    timer.textContent = fmt(remaining);
+    window.__fallbackTimer = setInterval(() => {
+      remaining = Math.max(0, remaining - 1);
+      timer.textContent = fmt(remaining);
+      if (remaining === 0) clearInterval(window.__fallbackTimer);
+    }, 1000);
+  });
+})();
+</script>
+<!-- /START BUTTON: safe early binder -->
+  <header>
+    <div class="bar container">
+      <div>
+        <div class="pill">Business Law Today: Essentials — Modules 1–7</div>
+        <h1>Comprehensive Final Exam</h1>
+      </div>
+      <div class="score-card" id="scoreCard">Score: —</div>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="section" id="about">
+      <h2>Read This Fictional Case (for Short‑Answer)</h2>
+      <p class="meta">Read carefully; you’ll reference this case in the short‑answer items.</p>
+      <div id="story" class="story"></div>
+    </section>
+
+    <section class="section" id="tfSection">
+      <h2>Part A — True / False (16)</h2>
+      <div id="tfList"></div>
+    </section>
+
+    <section class="section" id="mcSection">
+      <h2>Part B — Multiple Choice (62)</h2>
+      <div id="mcList"></div>
+    </section>
+
+    <section class="section" id="saSection">
+      <h2>Part C — Short Answer (2)</h2>
+      <p class="meta">Score each response 0–10; both tie directly to the case above.</p>
+      <div id="saList"></div>
+    </section>
+
+    <div class="sticky-bottom">
+      <button id="gradeBtn" class="btn">Grade</button>
+      <button id="rescoreBtn" class="btn secondary" disabled>Rescore</button>
+      <button id="resetBtn" class="btn ghost">Reset</button>
+    </div>
+  </main>
+
+  <script>
+  // ======= STORY (2 advanced paragraphs) =======
+  const story = 
+`At dawn on the first trading day of the quarter, Caelum Logistics, Inc. unveiled an algorithmic dispatch system that repriced deliveries every ninety seconds based on a proprietary blend of driver biometrics, traffic telemetry, and vendor‑priority scores. The board—flush with venture capital and confident in its ‘frictionless compliance’ playbook—authorized an audacious expansion: micro‑fulfillment depots staffed by temp workers classified as ‘project partners,’ a licensing deal for a patented cold‑chain sensor suite, and a franchise‑style kiosk network at university hospitals that required exclusive purchasing from approved suppliers. A clickwrap—dense, meticulously hyperlinked—governed every driver and merchant interaction. In the scramble to open depots before winter, the COO hired an unlicensed electrician recommended by a cousin to retrofit panels, while procurement accepted a rush shipment of temperature‑rated crates with latent polymer defects that hairline‑fractured under load. 
+
+By mid‑season, a viral post accused Caelum of “knowing distribution of counterfeit biologics packaging,” investors demanded audited books, and the CFO—seeking liquidity—perfected a blanket inventory security interest and quietly prepaid a favored creditor despite cash‑flow insolvency. Marketing launched a confusingly similar ‘CaelNet’ sub‑brand that drew a cease‑and‑desist from the sensor licensor, and a depot manager—still on the payroll—broadcast exaggerated shelf‑life claims customers relied upon. When a refrigerated crate failed and a hospital reported spoilage, negligence and product‑liability claims followed; HR fielded an ADA complaint from a depot worker after scheduling software ignored a documented accommodation. As the board weighed Chapter 11, a minority shareholder demanded inspection rights, the franchisor threatened termination, and the independent contractor who built the route‑planning portal asserted a bonus based on an email that read like an illusory promise.`;
+
+  // ======= QUESTION BANKS =======
+  // T/F (16 items)
+  const tf = [
+    {t:"Administrative agencies issue rules that carry the force of law if enacted via proper procedures.", a:true, h:"Think notice-and-comment rulemaking under the APA."},
+    {t:"Personal jurisdiction and subject‑matter jurisdiction refer to the same concept.", a:false, h:"One is power over the parties; the other is power over the type of case."},
+    {t:"Stare decisis encourages courts to follow precedent for stability and predictability.", a:true, h:"It promotes consistent application of law."},
+    {t:"A conspicuous clickwrap can form an enforceable contract.", a:true, h:"Assent + reasonable notice typically work."},
+    {t:"The preexisting duty rule generally prevents enforcing a price increase for the same performance.", a:false, h:"Under common law, you need new consideration."},
+    {t:"Strict liability can apply to abnormally dangerous activities even without negligence.", a:true, h:"Think blasting, hazardous transport, etc."},
+    {t:"Defamation requires a false statement of fact published to at least one third party.", a:true, h:"Opinion alone is not defamation."},
+    {t:"Trademark dilution requires proof of actual consumer confusion.", a:false, h:"Dilution targets blurring/tarnishment of famous marks."},
+    {t:"A minor’s contracts are always void.", a:false, h:"Most are voidable; necessaries differ."},
+    {t:"Exculpatory clauses are never enforceable.", a:false, h:"Some are enforceable if reasonable and not against public policy."},
+    {t:"A novation substitutes a new party and releases the original obligor.", a:true, h:"All parties must assent."},
+    {t:"A PMSI in consumer goods is automatically perfected without filing in many jurisdictions.", a:true, h:"UCC Article 9 rule (with exceptions)."},
+    {t:"Disparate impact under Title VII requires discriminatory intent.", a:false, h:"It’s about facially neutral practices with adverse effect."},
+    {t:"Courts may pierce the corporate veil for commingling and undercapitalization.", a:true, h:"Equity looks to substance over form."},
+    {t:"In Chapter 11, a debtor in possession typically continues operating the business.", a:true, h:"DIP retains many trustee powers."},
+    {t:"Principals are never liable for agents’ negligent acts.", a:false, h:"Respondeat superior may impose liability within scope."}
+  ];
+
+  // MC (62 items). First 48 adapted from a prior set, plus 14 new.
+  const mc = [
+    {q:"Which is NOT a source of American law?", options:["Administrative rules","Judicial precedent","Executive orders","Corporate bylaws"], a:3, h:"Bylaws govern one corporation; they are not a source of public law."},
+    {q:"Personal jurisdiction concerns:", options:["Power over the subject matter","Power over the parties","Proper county for trial","Whether plaintiff was injured"], a:1, h:"It’s about the court’s authority over the defendant."},
+    {q:"Best ADR when parties want a binding third‑party decision?", options:["Negotiation","Mediation","Arbitration","Mini‑trial"], a:2, h:"Arbitration awards are usually binding."},
+    {q:"Which is required for negligence?", options:["Duty, breach, causation, damages","Intent","Privity","Malice"], a:0, h:"These are the classic four elements."},
+    {q:"Proximate cause asks whether:", options:["Defendant owed a duty","Damages were foreseeable","Defendant acted intentionally","Plaintiff assumed risk"], a:1, h:"It limits liability to foreseeable harms."},
+    {q:"Battery requires:", options:["Apprehension of harm only","Offensive contact","Publication to a third party","Extreme outrage"], a:1, h:"Apprehension alone is assault."},
+    {q:"Under FCPA, U.S. firms may:", options:["Pay to win contracts","Make grease payments to speed routine acts","Bribe customs officials if local law allows","Hire agents to bribe"], a:1, h:"Facilitating payments differ from bribes."},
+    {q:"Which is an illusory promise?", options:["I will buy 500 units at $5 each.","I’ll purchase if I feel like it.","I accept your offer by email.","We agree to arbitrate disputes."], a:1, h:"No commitment = illusory."},
+    {q:"Copyright protection attaches:", options:["Only after USPTO registration","Upon fixation in a tangible medium","After publication for 30 days","After notice ©"], a:1, h:"Registration aids enforcement but is not required for subsistence."},
+    {q:"Trademark infringement turns primarily on:", options:["Likelihood of confusion","Proof of malice","Exact copying","Registration status"], a:0, h:"Multi‑factor tests evaluate confusion."},
+    {q:"The mailbox rule generally means an acceptance is effective:", options:["When received","When sent","When read","When filed"], a:1, h:"Unless the offer states otherwise."},
+    {q:"A minor’s contract for necessaries is:", options:["Enforceable against the adult only","Void","Voidable but liable for reasonable value","Unenforceable by anyone"], a:2, h:"Quasi‑contract may require payment for necessaries."},
+    {q:"A contract with an unlicensed contractor in a licensing state is typically:", options:["Enforceable by the contractor","Unenforceable as illegal","Always voidable by customer only","Valid if partly performed"], a:1, h:"Depends on regulatory vs. revenue licenses."},
+    {q:"Which clause is enforceable if reasonable and tied to a legitimate interest?", options:["Penalty","Noncompete","Exculpatory clause for hospitals","Secret arbitration"], a:1, h:"Protects goodwill/trade secrets if scoped."},
+    {q:"Substantial performance means:", options:["Any breach excuses performance","Good‑faith minor deviations with damages","No deviations allowed","Only time is of the essence"], a:1, h:"Material breach differs."},
+    {q:"Remedy that orders a party to perform the contract:", options:["Rescission","Specific performance","Reformation","Injunction"], a:1, h:"Common for unique goods/land."},
+    {q:"Liquidated damages are enforceable when:", options:["Damages were hard to estimate and amount is reasonable","They punish breach","They exceed actual loss massively","They are in every boilerplate"], a:0, h:"They must be a reasonable forecast at formation."},
+    {q:"Which must be in writing under the Statute of Frauds?", options:["Sale of goods for $450","One‑year employment fully performable within 6 months","Contract for land","Cash sale at farmer’s market"], a:2, h:"Interests in land must be written."},
+    {q:"Quasi‑contract prevents:", options:["Over‑performance","Unjust enrichment","Unfair competition","Liquidation"], a:1, h:"Restitution addresses unfair benefit."},
+    {q:"Perfection of a security interest by filing uses:", options:["UCC‑1 financing statement","UCC‑9 form","Promissory note","Mechanic’s lien"], a:0, h:"Filed in proper office to perfect."},
+    {q:"Priority generally goes to:", options:["First to attach","First to perfect","Largest creditor","Secured party with lowest rate"], a:1, h:"First to file or perfect wins (with exceptions)."},
+    {q:"A surety is:", options:["Secondarily liable","Primarily liable","Never liable","Only liable after judgment"], a:1, h:"Guarantor is typically secondary."},
+    {q:"Automatic stay does NOT stop:", options:["Wage garnishment","Domestic support actions","Collection calls","Foreclosure"], a:1, h:"Support obligations are excepted."},
+    {q:"Debtor in Possession (DIP) is typical in:", options:["Chapter 7","Chapter 11","Chapter 12","Chapter 13"], a:1, h:"DIP runs the business with court oversight."},
+    {q:"Agency exists when:", options:["There is consent and control","There is payment only","A contract is written","The agent is licensed"], a:0, h:"Control + consent is key."},
+    {q:"Under respondeat superior, the principal is liable for:", options:["Agent’s negligence within scope","Agent’s frolic outside scope","Agent’s intentional tort unrelated","Independent contractor’s acts always"], a:0, h:"Scope matters."},
+    {q:"Equal Dignity Rule requires:", options:["Agent paid equally","Written authority when underlying contract must be written","Equal pay for equal work","Equal shares"], a:1, h:"Applies to certain transactions like land."},
+    {q:"Best defense to disparate impact claim:", options:["BFOQ","Business necessity","After‑acquired evidence","Lack of standing"], a:1, h:"Job‑related and consistent with business necessity."},
+    {q:"IRCA requires employers to:", options:["Use E‑Verify only","Complete Form I‑9","Sponsor H‑1B for all grads","Retain tax returns"], a:1, h:"Identity and work authorization verification."},
+    {q:"Sole proprietorship characteristic:", options:["Limited liability","Double taxation","Pass‑through taxation","Separate legal person"], a:2, h:"Owner reports income on personal return."},
+    {q:"General partners have:", options:["Limited liability","Joint and several liability","No tort liability","Shield by default"], a:1, h:"They are fully liable."},
+    {q:"LLC combines:", options:["Pass‑through + limited liability","Double tax + unlimited liability","No filings + limited liability","Strict formalities only"], a:0, h:"Hybrid structure."},
+    {q:"Dissolution begins:", options:["Winding up","Formation","Piercing veil","Ultra vires"], a:0, h:"Process of concluding business."},
+    {q:"Close corporations risk veil piercing due to:", options:["Formal boards","Public trading","Informality/commingling","SEC registration"], a:2, h:"Observe corporate formalities."},
+    {q:"Shareholders may bring a:", options:["Derivative suit on corporation’s behalf","Criminal indictment","Agency appeal","Bankruptcy appeal"], a:0, h:"To redress harm to the corporation."},
+    {q:"Preemptive rights give existing shareholders:", options:["Right to dividends","First option to buy new shares","Right to fire officers","Right to dissolve"], a:1, h:"Prevents dilution."},
+    {q:"Ultra vires acts are:", options:["Within express powers","Beyond corporate authority","Tortious only","Always criminal"], a:1, h:"Historically limited by charters."},
+    {q:"In the Caelum case, latent crate defects most directly raise:", options:["Strict liability for abnormally dangerous activity","Product‑liability claims","Trademark infringement","Patent expiration"], a:1, h:"Manufacturing/design/warning issues."},
+    {q:"‘CaelNet’ vs the licensor’s mark likely raises:", options:["Copyright fair use","Trademark dilution/confusion","Trade secret theft","Patent misuse"], a:1, h:"Look for similarity + strength of mark."},
+    {q:"Favoring one creditor pre‑petition suggests:", options:["Preferential transfer","Fraudulent conveyance only","Novation","Assumption"], a:0, h:"Preference analysis under Bankruptcy Code."},
+    {q:"Posting exaggerated shelf‑life claims risks:", options:["Negligence per se","Fraudulent misrepresentation","Battery","Workers’ comp"], a:1, h:"Material misstatement + reliance."},
+    {q:"Independent contractor portal developer implies:", options:["Usually no vicarious liability for ordinary negligence","Strict vicarious liability","Automatic agency termination","Employee benefits owed"], a:0, h:"Exceptions apply (non‑delegable duties, etc.)."},
+    {q:"Clickwrap at checkout is generally:", options:["Unenforceable","Valid acceptance if conspicuous","Valid only on paper","Void against minors"], a:1, h:"Design and notice matter."},
+    {q:"Unlicensed electrical work contract in a regulatory licensing state is:", options:["Enforceable by contractor","Likely illegal and unenforceable","Valid if customer benefited","Ratified automatically"], a:1, h:"Protects public safety."},
+    {q:"Franchise termination usually requires:", options:["No notice","Good cause + opportunity to cure","Strict liability","Judicial estoppel"], a:1, h:"Check franchise statutes/agreements."},
+    {q:"UCC‑1 filing perfects a security interest in:", options:["Real property","Consumer goods automatically only","Most business inventory","Personal goodwill"], a:2, h:"Real property uses mortgages/recording statutes."},
+    {q:"ADA requires:", options:["No accommodations ever","Reasonable accommodation for qualified individuals","Preference in promotion","Citizenship"], a:1, h:"Interactive process is key."},
+    {q:"Business Judgment Rule protects directors who:", options:["Act in good faith and informed manner","Guarantee profits","Ignore conflicts","Hide records"], a:0, h:"No duty of guarantee."},
+    {q:"Statute of Frauds requires writing for:", options:["Five‑month services contract","Sale of goods $600","Tort release","At‑will employment"], a:1, h:"UCC §2‑201 threshold."},
+    {q:"Mechanic’s lien typically attaches to:", options:["Personal property held","Real estate improved","Accounts receivable","Securities"], a:1, h:"Protects those who improve land."},
+
+    // NEW 14
+    {q:"Parol evidence rule generally bars:", options:["Evidence of subsequent modification","Evidence of prior oral terms contradicting a final written contract","Evidence of fraud in the inducement","Evidence to explain ambiguity"], a:1, h:"Integration controls; exceptions exist."},
+    {q:"Which is a defense to contract formation?", options:["Mutual mistake of material fact","Adequate consideration","Capacity","Legality"], a:0, h:"Mutual mistake permits rescission."},
+    {q:"Mailbox rule exception occurs when:", options:["Offer is irrevocable","Offer stipulates receipt required","Acceptance sent by mail","Offeror is a merchant"], a:1, h:"The offeror can control the mode."},
+    {q:"A covenant not to compete is most likely enforceable when:", options:["Worldwide for 10 years for any job","Narrow in duration/geography tied to legitimate interest","Hidden in unreadable fine print","Imposed on unpaid interns"], a:1, h:"Reasonableness matters."},
+    {q:"A firm offer under the UCC requires:", options:["Consideration","A signed writing by a merchant assuring it will be held open","A seal","Acceptance within 10 days"], a:1, h:"UCC §2‑205; 3‑month cap generally."},
+    {q:"Rescission is best described as:", options:["Money damages for breach","Equitable unwinding of the contract","Punitive damages","Specific performance"], a:1, h:"Puts parties back to pre‑contract position."},
+    {q:"Statute of Frauds ‘one‑year’ provision applies when:", options:["Performance could possibly be completed within one year","Performance cannot be completed within one year by its terms","Either party is a minor","The price exceeds $200"], a:1, h:"If possible within a year, not required."},
+    {q:"Trade secret protection lasts:", options:["20 years","As long as secrecy is maintained","5 years","Until first sale"], a:1, h:"Reasonable measures to maintain secrecy required."},
+    {q:"A famous mark owner sues for dilution by blurring. They must show:", options:["Actual confusion","Fame of the mark and association that impairs distinctiveness","Registration in all classes","Counterfeit goods"], a:1, h:"Confusion is not required for dilution."},
+    {q:"Which is most likely an unconscionable term?", options:["Clear arbitration clause with opt‑out","Take‑it‑or‑leave‑it clause waiving liability for reckless conduct in essential services","Mutual attorney‑fee provision","Choice‑of‑law for parties’ home state"], a:1, h:"Substantive + procedural unfairness."},
+    {q:"Apparent authority arises from:", options:["Agent’s secret belief","Principal’s manifestations to third parties","Agent’s self‑designation only","A past tort"], a:1, h:"Focus on what the third party reasonably sees."},
+    {q:"A shareholder’s inspection right typically requires:", options:["Any purpose at all","A proper purpose and reasonable time/place","Court order only","SEC approval"], a:1, h:"Statutes set process and limits."},
+    {q:"Preference avoidance generally requires that the transfer was:", options:["To an insider only","On account of an antecedent debt while insolvent within 90 days pre‑petition and improves the creditor’s position","For contemporaneous exchange for new value","Approved by the court"], a:1, h:"Elements under §547."},
+    {q:"Under Title VII retaliation, a prima facie case needs:", options:["Protected activity, adverse action, causal link","Employment contract, breach, damages","Disability and accommodation","Age over 50"], a:0, h:"Then burden shifts to employer."}
+  ];
+
+  // Short Answer (2)
+  const sa = [
+    {p:"(Case) The hospital’s spoilage loss: Identify two plausible tort or product‑liability theories against Caelum and analyze the company’s best defenses (causation, warnings, third‑party supplier liability). Score 0–10."},
+    {p:"(Case) The unlicensed electrical work: Is the contract enforceable and what are the consequences for restitution and regulatory penalties? Tie your answer to licensing/legality rules. Score 0–10."}
+  ];
+
+  // ======= RENDER =======
+  const tfList = document.getElementById('tfList');
+  const mcList = document.getElementById('mcList');
+  const saList = document.getElementById('saList');
+  document.getElementById('story').textContent = story;
+
+  tf.forEach((item, idx)=>{
+    const q = document.createElement('div'); q.className='q'; q.dataset.kind='tf'; q.dataset.index=idx;
+    q.innerHTML = `<h4>A${idx+1}. ${item.t}</h4>
+      <div class="answers">
+        <label><input type="radio" name="tf${idx}" value="true"> True</label>
+        <label><input type="radio" name="tf${idx}" value="false"> False</label>
+      </div>`;
+    tfList.appendChild(q);
+  });
+
+  mc.forEach((item, idx)=>{
+    const q = document.createElement('div'); q.className='q'; q.dataset.kind='mc'; q.dataset.index=idx;
+    const opts = item.options.map((o,i)=>`<label><input type="radio" name="mc${idx}" value="${i}"> ${o}</label>`).join('');
+    q.innerHTML = `<h4>B${idx+1}. ${item.q}</h4><div class="answers">${opts}</div>`;
+    mcList.appendChild(q);
+  });
+
+  sa.forEach((item, idx)=>{
+    const q = document.createElement('div'); q.className='q'; q.dataset.kind='sa'; q.dataset.index=idx;
+    q.innerHTML = `<h4>C${idx+1}. ${item.p}</h4>
+      <div class="short">
+        <textarea placeholder="Your analysis / answer..."></textarea>
+        <div class="points">
+          <label for="sap${idx}">Points (0–10)</label>
+          <input id="sap${idx}" type="number" min="0" max="10" step="1" value="0">
+        </div>
+      </div>`;
+    saList.appendChild(q);
+  });
+
+  // ======= TIMER & GATE =======
+  let remaining = 50*60; // seconds
+  let tHandle = null;
+  const timer = document.getElementById('timer');
+  const gate = document.getElementById('gate');
+  const startBtn = document.getElementById('startBtn');
+  const scoreCard = document.getElementById('scoreCard');
+
+  const fmt = s=>{ const m=Math.floor(s/60), ss=s%60; return `${String(m).padStart(2,'0')}:${String(ss).padStart(2,'0')}`; }
+  const tick = ()=>{
+    remaining--;
+    if(remaining<=0){ clearInterval(tHandle); remaining=0; timer.classList.add('over'); gradeExam(true); }
+    if(remaining<=5*60) timer.classList.add('soon');
+    timer.textContent = fmt(remaining);
+  };
+
+  document.body.style.overflow='hidden';
+
+  // ======= EFFECTS: Confetti + Whammy =======
+  const confetti = document.getElementById('confetti');
+  const cx = confetti.getContext('2d');
+  function resizeCanvas(){ confetti.width = window.innerWidth; confetti.height = window.innerHeight; }
+  window.addEventListener('resize', resizeCanvas); resizeCanvas();
+
+  function fireConfetti(ms=500){
+    const pieces = Array.from({length:100}, ()=> ({
+      x: Math.random()*confetti.width,
+      y: -10,
+      vY: 2 + Math.random()*4,
+      vX: -2 + Math.random()*4,
+      s: 4 + Math.random()*4,
+      r: Math.random()*Math.PI
+    }));
+    const start = performance.now();
+    function step(t){
+      const dt = t - (step.last||t); step.last = t;
+      cx.clearRect(0,0,confetti.width,confetti.height);
+      pieces.forEach(p=>{
+        p.y += p.vY; p.x += p.vX; p.r += 0.1;
+        cx.save();
+        cx.translate(p.x,p.y);
+        cx.rotate(p.r);
+        cx.fillRect(-p.s/2,-p.s/2,p.s,p.s);
+        cx.restore();
+      });
+      if(t-start < ms){ requestAnimationFrame(step); } else { cx.clearRect(0,0,confetti.width,confetti.height); }
+    }
+    requestAnimationFrame(step);
+  }
+
+  const whammy = document.getElementById('whammy');
+  function showWhammy(){
+    whammy.classList.remove('show');
+    void whammy.offsetWidth; // reflow
+    whammy.classList.add('show');
+    setTimeout(()=> whammy.classList.remove('show'), 1000);
+  }
+
+  // ======= GRADING & SECOND‑CHANCE =======
+  const gradeBtn = document.getElementById('gradeBtn');
+  const rescoreBtn = document.getElementById('rescoreBtn');
+  const resetBtn = document.getElementById('resetBtn');
+
+  const wrongTF = new Set();
+  const wrongMC = new Set();
+
+  function ensureSecondChance(container, kind, idx, item){
+    if(container.querySelector('.second-chance')) return;
+    const sc = document.createElement('div'); sc.className = 'second-chance';
+    const hintBtn = document.createElement('button'); hintBtn.textContent='Hint'; hintBtn.className='btn ghost'; hintBtn.type='button';
+    const hint = document.createElement('div'); hint.className='hint hidden';
+    hint.textContent = (item && item.h) ? item.h : 'Focus on the legal elements and definitions.';
+    hintBtn.addEventListener('click', ()=> hint.classList.toggle('hidden'));
+
+    if(kind==='tf'){
+      sc.innerHTML = `<div><small>Second Chance (worth half credit)</small></div>
+        <div class="answers">
+          <label><input type="radio" name="tf2${idx}" value="true"> True</label>
+          <label><input type="radio" name="tf2${idx}" value="false"> False</label>
+        </div>`;
+    } else {
+      const opts = (item.options||[]).map((o,i)=>`<label><input type="radio" name="mc2${idx}" value="${i}"> ${o}</label>`).join('');
+      sc.innerHTML = `<div><small>Second Chance (worth half credit)</small></div><div class="answers">${opts}</div>`;
+    }
+    sc.appendChild(hintBtn); sc.appendChild(hint);
+    container.appendChild(sc);
+  }
+
+  function gradeExam(auto=false){
+    document.querySelectorAll('.q').forEach(el=>{el.classList.remove('wrong','right')});
+    let earned = 0, possible = 0;
+
+    // TF
+    tf.forEach((item, idx)=>{
+      const q = document.querySelector(\`.q[data-kind="tf"][data-index="\${idx}"]\`);
+      const sel = q.querySelector('input[type="radio"]:checked');
+      const val = sel? (sel.value==='true') : null;
+      const wasWrong = wrongTF.has(idx);
+      const correct = (val===item.a);
+      const worth = wasWrong? 0.5 : 1;
+      possible += worth;
+      if(correct){ earned += worth; q.classList.add('right'); fireConfetti(500); }
+      else { q.classList.add('wrong'); wrongTF.add(idx); ensureSecondChance(q,'tf',idx,item); showWhammy(); }
+    });
+
+    // MC
+    mc.forEach((item, idx)=>{
+      const q = document.querySelector(\`.q[data-kind="mc"][data-index="\${idx}"]\`);
+      const sel = q.querySelector('input[type="radio"]:checked');
+      const val = sel? Number(sel.value): null;
+      const wasWrong = wrongMC.has(idx);
+      const isCorrect = (val===item.a);
+      const worth = wasWrong? 0.5 : 1;
+      possible += worth;
+      if(isCorrect){ earned += worth; q.classList.add('right'); fireConfetti(500); }
+      else { q.classList.add('wrong'); wrongMC.add(idx); ensureSecondChance(q,'mc',idx,item); showWhammy(); }
+    });
+
+    // SA (manual points)
+    sa.forEach((_, idx)=>{
+      const pts = Number(document.getElementById(\`sap\${idx}\`).value||0);
+      earned += Math.max(0, Math.min(10, pts));
+      possible += 10;
+    });
+
+    const pct = possible? (earned/possible*100):0;
+    scoreCard.textContent = \`Score: \${earned.toFixed(1)} / \${possible.toFixed(1)} (\${pct.toFixed(1)}%)\`;
+    rescoreBtn.disabled = false;
+  }
+
+  function rescore(){
+    let earned = 0, possible = 0;
+
+    // TF
+    tf.forEach((item, idx)=>{
+      const q = document.querySelector(\`.q[data-kind="tf"][data-index="\${idx}"]\`);
+      const wasWrong = wrongTF.has(idx);
+      const primary = q.querySelector('input[name="tf'+idx+'"]:checked');
+      const primaryVal = primary? (primary.value==='true'):null;
+      if(!wasWrong){ possible += 1; if(primaryVal===item.a){ earned += 1; q.classList.add('right'); } else { q.classList.add('wrong'); } }
+      else {
+        const sc = q.querySelector('input[name="tf2'+idx+'"]:checked');
+        possible += 0.5; if(sc && (sc.value==='true')===item.a){ earned += 0.5; q.classList.add('right'); } else { q.classList.add('wrong'); }
+      }
+    });
+
+    // MC
+    mc.forEach((item, idx)=>{
+      const q = document.querySelector(\`.q[data-kind="mc"][data-index="\${idx}"]\`);
+      const wasWrong = wrongMC.has(idx);
+      const primary = q.querySelector('input[name="mc'+idx+'"]:checked');
+      const primaryVal = primary? Number(primary.value):null;
+      if(!wasWrong){ possible += 1; if(primaryVal===item.a){ earned += 1; q.classList.add('right'); } else { q.classList.add('wrong'); } }
+      else {
+        const sc = q.querySelector('input[name="mc2'+idx+'"]:checked');
+        possible += 0.5; if(sc && Number(sc.value)===item.a){ earned += 0.5; q.classList.add('right'); } else { q.classList.add('wrong'); }
+      }
+    });
+
+    // SA
+    sa.forEach((_, idx)=>{
+      const pts = Number(document.getElementById('sap'+idx).value||0);
+      earned += Math.max(0, Math.min(10, pts));
+      possible += 10;
+    });
+
+    const pct = possible? (earned/possible*100):0;
+    scoreCard.textContent = \`Score: \${earned.toFixed(1)} / \${possible.toFixed(1)} (\${pct.toFixed(1)}%)\`;
+  }
+
+  gradeBtn.addEventListener('click', ()=> gradeExam(false));
+  rescoreBtn.addEventListener('click', ()=> rescore());
+  resetBtn.addEventListener('click', ()=> window.location.reload());
+  </script>
+</body>
+</html>

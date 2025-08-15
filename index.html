@@ -8,7 +8,39 @@
     :root{
       --bg:#0b0f14; --panel:#111822; --muted:#a6b5c7; --ink:#e7eef7; --accent:#4da3ff;
       --ok:#1db954; --bad:#ff4d4f; --warn:#ffd166;
+    }<script>
+(function () {
+  const gate    = document.getElementById('gate');
+  const startBtn= document.getElementById('startBtn');
+  const timerEl = document.getElementById('timer');
+
+  // Lock scroll until start
+  document.body.style.overflow = 'hidden';
+
+  function fmt(s){ const m=Math.floor(s/60), ss=s%60; return `${String(m).padStart(2,'0')}:${String(ss).padStart(2,'0')}`; }
+
+  startBtn?.addEventListener('click', () => {
+    // Hide the intro overlay and allow scrolling
+    gate?.classList.add('hidden');
+    document.body.style.overflow = 'auto';
+
+    // Prefer your main timer if it's defined…
+    if (typeof window.tHandle !== 'undefined' && typeof window.tick === 'function') {
+      if (!window.tHandle) window.tHandle = setInterval(window.tick, 1000);
+      return;
     }
+
+    // …otherwise do a simple, safe fallback timer so the UI updates
+    let remaining = 50 * 60;
+    timerEl.textContent = fmt(remaining);
+    window.__fallbackTimer = setInterval(() => {
+      remaining = Math.max(0, remaining - 1);
+      timerEl.textContent = fmt(remaining);
+      if (remaining === 0) clearInterval(window.__fallbackTimer);
+    }, 1000);
+  });
+})();
+</script>
     html,body{height:100%;margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink)}
     .container{max-width:1100px;margin:0 auto;padding:24px}
     header{position:sticky;top:0;background:linear-gradient(180deg,rgba(11,15,20,.95),rgba(11,15,20,.65));backdrop-filter:blur(6px);border-bottom:1px solid #1b2533;z-index:20}
